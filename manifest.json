@@ -1,0 +1,22 @@
+
+{
+  "short_name": "Foto de Cinema",
+  "name": "Gerador de Foto com Tema de Cinema",
+  "description": "Transforme sua foto em uma cena de filme icônico com o poder da IA.",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#111827",
+  "background_color": "#111827"
+}

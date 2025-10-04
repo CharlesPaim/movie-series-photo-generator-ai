@@ -1,0 +1,7 @@
+{
+  "name": "Gerador de Foto com Tema de Cinema",
+  "description": "",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
