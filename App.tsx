@@ -24,6 +24,22 @@ const themes = [
     'Stranger Things',
     'Piratas do Caribe',
     '007',
+    'O Senhor dos Anéis',
+    'O Hobbit',
+    'Duna',
+    'Blade Runner',
+    'O Quinto Elemento',
+    'Mad Max',
+    'Guardiões da Galáxia',
+    'Homem-Aranha',
+    'Batman',
+    'Mulher-Maravilha',
+    'Tubarão',
+    'Pulp Fiction',
+    'O Poderoso Chefão',
+    'La Casa de Papel',
+    'The Last of Us',
+    'Peaky Blinders'
 ];
 
 const App: React.FC = () => {
