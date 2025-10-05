@@ -41,9 +41,10 @@
       // Registra o Service Worker após o carregamento completo da página.
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          // Usar um caminho relativo ao documento ('service-worker.js') em vez de relativo à raiz
-          // para garantir que seja resolvido a partir da origem correta em ambientes de sandbox.
-          navigator.serviceWorker.register('service-worker.js')
+          // Constrói a URL completa para o service worker usando a origem da página atual
+          // para evitar problemas de resolução de caminho em ambientes de sandbox.
+          const swUrl = `${window.location.origin}/service-worker.js`;
+          navigator.serviceWorker.register(swUrl)
             .then(registration => {
               console.log('Service Worker registrado com sucesso:', registration.scope);
             })

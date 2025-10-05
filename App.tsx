@@ -18,6 +18,12 @@ const themes = [
     'Rambo',
     'Rocky',
     'Matrix',
+    'Harry Potter',
+    'Game of Thrones',
+    'Vingadores',
+    'Stranger Things',
+    'Piratas do Caribe',
+    '007',
 ];
 
 const App: React.FC = () => {

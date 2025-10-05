@@ -1,3 +1,4 @@
+
 import { GoogleGenAI, Modality } from "@google/genai";
 
 export const generateMovieThemedPhoto = async (
@@ -14,11 +15,13 @@ export const generateMovieThemedPhoto = async (
   const ai = new GoogleGenAI({ apiKey: API_KEY });
 
   try {
-    const prompt = `Transforme a(s) pessoa(s) na foto para que se pareçam com personagem(ns) do filme "${theme}". A imagem deve ser estilizada como uma cena ou pôster de filme de alta qualidade, com figurinos, penteados, plano de fundo e iluminação que correspondam à estética do filme.
+    const prompt = `Transforme a(s) pessoa(s) na foto para que se pareçam com personagem(ns) do filme ou série "${theme}". A imagem deve ser estilizada como um **PÔSTER DE FILME FOTORREALISTA** ou uma **CENA CINEMATOGRÁFICA**. Inclua figurinos, penteados, plano de fundo, adereços e iluminação que correspondam **EXATAMENTE** à estética e à paleta de cores do filme "${theme}".
 
-**Instrução Crítica:** Os traços faciais e a semelhança da(s) pessoa(s) devem ser preservados exatamente. Elas precisam ser perfeitamente reconhecíveis. Não altere os rostos.
+**Melhoria de Qualidade:** A imagem deve ser renderizada em **fotografia de cinema, 8K, hiper-detalhada, com iluminação dramática e volumétrica**, capturada com uma **lente prime de 85mm com profundidade de campo rasa (bokeh)**.
 
-Se houver várias pessoas, transforme cada uma em um personagem apropriado do filme.
+**Instrução Crítica (Preservação):** Os traços faciais e a semelhança da(s) pessoa(s) devem ser preservados **EXATAMENTE**. Elas precisam ser perfeitamente reconhecíveis. Não altere os rostos.
+
+Se houver várias pessoas, transforme cada uma em um personagem apropriado do filme/série.
 
 Retorne **apenas** a imagem final.`;
 
