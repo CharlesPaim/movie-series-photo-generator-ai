@@ -15,15 +15,20 @@ export const generateMovieThemedPhoto = async (
   const ai = new GoogleGenAI({ apiKey: API_KEY });
 
   try {
-    const prompt = `Transforme a(s) pessoa(s) na foto para que se pareçam com personagem(ns) do filme ou série "${theme}". A imagem deve ser estilizada como um **PÔSTER DE FILME FOTORREALISTA** ou uma **CENA CINEMATOGRÁFICA**. A imagem final DEVE ter uma proporção de **${aspectRatio}**. Inclua figurinos, penteados, plano de fundo, adereços e iluminação que correspondam **EXATAMENTE** à estética e à paleta de cores do filme "${theme}".
+    const prompt = `Crie uma **nova imagem** com base na(s) pessoa(s) da foto fornecida, transformando-a(s) em personagem(ns) do universo "${theme}". A imagem deve ser uma **CENA CINEMATOGRÁFICA FOTORREALISTA** ou um **PÔSTER DE FILME**.
 
-**Melhoria de Qualidade:** A imagem deve ser renderizada em **fotografia de cinema, 8K, hiper-detalhada, com iluminação dramática e volumétrica**, capturada com uma **lente prime de 85mm com profundidade de campo rasa (bokeh)**.
+**Instrução Crítica de Formato:** A imagem final DEVE ser completamente renderizada com uma proporção de **${aspectRatio}**. Se a imagem original tiver uma proporção diferente, expanda e recrie o cenário, o fundo e os elementos ao redor para preencher perfeitamente o novo formato, mantendo a estética de "${theme}". Não estique ou distorça a imagem original; em vez disso, gere conteúdo adicional para o ambiente.
 
-**Instrução Crítica (Preservação):** Os traços faciais e a semelhança da(s) pessoa(s) devem ser preservados **EXATAMENTE**. Elas precisam ser perfeitamente reconhecíveis. Não altere os rostos.
+**Estilo e Qualidade:**
+- **Estética:** Corresponda **EXATAMENTE** à paleta de cores, iluminação (dramática, volumétrica), figurinos e adereços do filme/série "${theme}".
+- **Qualidade Técnica:** Renderize em **8K, hiper-detalhado**, como se fosse capturado com uma **lente prime de 85mm com profundidade de campo rasa (bokeh)**.
 
-Se houver várias pessoas, transforme cada uma em um personagem apropriado do filme/série.
+**Preservação de Identidade:**
+- Mantenha os traços faciais e a semelhança da(s) pessoa(s) **INTACTOS**. Elas devem ser perfeitamente reconhecíveis.
 
-Retorne **apenas** a imagem final.`;
+Se houver várias pessoas, transforme cada uma em um personagem apropriado.
+
+Retorne **apenas** a imagem final, sem texto ou bordas adicionais.`;
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash-image',
@@ -100,14 +105,14 @@ export const generateVideoPrompt = async (
   const ai = new GoogleGenAI({ apiKey: API_KEY });
 
   try {
-    const prompt = `Você é um diretor de criação de um estúdio de cinema. Com base na imagem fornecida, que é uma cena com o tema "${theme}", gere um prompt hiperdetalhado para um modelo de IA de texto para vídeo como o Google Veo. O prompt deve descrever um clipe cinematográfico curto, de 5 segundos, que dê vida a esta imagem estática.
+    const prompt = `Você é um diretor de criação de um estúdio de cinema. Com base na imagem fornecida, que é uma cena com o tema "${theme}", gere um prompt **HIPER-DETALHADO** para um modelo de IA de texto para vídeo, como o Google Veo. O prompt deve descrever uma **micro-cena cinematográfica em movimento** que dê vida a esta imagem estática.
 
 Instruções:
-- Descreva a cena, os movimentos sutis e as expressões do personagem.
-- Detalhe a iluminação dinâmica e a atmosfera.
-- Especifique o movimento da câmera (ex: zoom lento, panorâmica suave para a esquerda, travelling).
-- O tom deve corresponder perfeitamente ao filme/série "${theme}".
-- A saída deve ser um único parágrafo de texto, pronto para ser copiado. Não inclua títulos ou formatação extra.`;
+- **Ação Sutil:** Descreva uma ação ou movimento sutil do personagem (ex: piscar de olhos, mudança de expressão lenta, movimento de um objeto de cena) que transforme a pose estática em um clipe.
+- **Estilo Visual:** O clipe deve ter **Cor Cinematográfica (Cinematic Color Grading)**, **Iluminação Dramática e Volumétrica**, correspondendo exatamente à estética de "${theme}".
+- **Câmera:** Especifique um movimento de câmera suave e deliberado (ex: dolly in lento, travelling lateral, ou zoom suave).
+- **Som/Atmosfera:** Mencione um efeito sonoro ou trilha sonora de fundo que reforce o tom da cena (ex: "Trilha sonora épica crescendo", "Vento uivante").
+- **Formato:** A saída deve ser um único parágrafo de texto, pronto para ser copiado. Não inclua títulos, numeração ou formatação extra.`;
 
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
