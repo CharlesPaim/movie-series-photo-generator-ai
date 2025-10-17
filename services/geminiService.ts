@@ -17,7 +17,7 @@ export const generateMovieThemedPhoto = async (
   try {
     const prompt = `Crie uma **nova imagem** com base na(s) pessoa(s) da foto fornecida, transformando-a(s) em personagem(ns) do universo "${theme}". A imagem deve ser uma **CENA CINEMATOGRÁFICA FOTORREALISTA** ou um **PÔSTER DE FILME**.
 
-**Instrução Crítica de Formato:** A imagem final DEVE ser completamente renderizada com uma proporção de **${aspectRatio}**. Se a imagem original tiver uma proporção diferente, expanda e recrie o cenário, o fundo e os elementos ao redor para preencher perfeitamente o novo formato, mantendo a estética de "${theme}". Não estique ou distorça a imagem original; em vez disso, gere conteúdo adicional para o ambiente.
+**Instrução de Formato CRÍTICA (Obrigatória):** A imagem de saída FINAL **DEVE** ter, sob estrita conformidade, a proporção exata de **${aspectRatio}**. Se a imagem original tiver uma proporção diferente, você deve **EXPANDIR** (outpaint) ou **REGERAR** o fundo e a cena para preencher este novo formato **obrigatoriamente**. Não estique ou distorça.
 
 **Estilo e Qualidade:**
 - **Estética:** Corresponda **EXATAMENTE** à paleta de cores, iluminação (dramática, volumétrica), figurinos e adereços do filme/série "${theme}".
