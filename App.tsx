@@ -1,9 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import { generateMovieThemedPhoto } from './services/geminiService';
+import { generateMovieThemedPhoto, generateVideoPrompt } from './services/geminiService';
 import { UploadStep } from './components/UploadStep';
 import { Loading } from './components/Loading';
 import { ResultStep } from './components/ResultStep';
 import { ThemeSelector } from './components/ThemeSelector';
+import { AspectRatioSelector } from './components/AspectRatioSelector';
 
 type AppState = 'upload' | 'loading' | 'result';
 
@@ -48,6 +49,10 @@ const App: React.FC = () => {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedTheme, setSelectedTheme] = useState<string | null>(null);
+  const [selectedAspectRatio, setSelectedAspectRatio] = useState<string>('16:9');
+  const [videoPrompt, setVideoPrompt] = useState<string | null>(null);
+  const [isVideoPromptLoading, setIsVideoPromptLoading] = useState<boolean>(false);
+  const [videoPromptError, setVideoPromptError] = useState<string | null>(null);
 
   const fileToBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -77,14 +82,33 @@ const App: React.FC = () => {
       const objectURL = URL.createObjectURL(file);
       setOriginalImage(objectURL);
 
-      const resultBase64 = await generateMovieThemedPhoto(base64String, mimeType, selectedTheme);
+      const resultBase64 = await generateMovieThemedPhoto(base64String, mimeType, selectedTheme, selectedAspectRatio);
       setGeneratedImage(`data:image/png;base64,${resultBase64}`);
       setAppState('result');
     } catch (err: any) {
       setError(err.message || 'Ocorreu um erro desconhecido.');
       setAppState('upload');
     }
-  }, [selectedTheme]);
+  }, [selectedTheme, selectedAspectRatio]);
+
+  const handleGenerateVideoPrompt = useCallback(async () => {
+    if (!generatedImage || !selectedTheme) return;
+
+    setIsVideoPromptLoading(true);
+    setVideoPromptError(null);
+    setVideoPrompt(null);
+
+    try {
+        const base64String = generatedImage.split(',')[1];
+        const mimeType = generatedImage.match(/:(.*?);/)?.[1] || 'image/png';
+        const prompt = await generateVideoPrompt(base64String, mimeType, selectedTheme);
+        setVideoPrompt(prompt);
+    } catch (err: any) {
+        setVideoPromptError(err.message || "Falha ao gerar roteiro para vídeo.");
+    } finally {
+        setIsVideoPromptLoading(false);
+    }
+}, [generatedImage, selectedTheme]);
 
   const handleRestart = () => {
     if (originalImage) {
@@ -94,7 +118,11 @@ const App: React.FC = () => {
     setGeneratedImage(null);
     setError(null);
     setSelectedTheme(null);
+    setSelectedAspectRatio('16:9');
     setAppState('upload');
+    setVideoPrompt(null);
+    setIsVideoPromptLoading(false);
+    setVideoPromptError(null);
   };
   
   const handleCropConfirm = (newImageSrc: string) => {
@@ -113,18 +141,24 @@ const App: React.FC = () => {
             );
         } else {
             return (
-                <div className="flex flex-col items-center w-full space-y-4 animate-fade-in">
-                     <div className="text-center">
-                        <h2 className="text-2xl font-bold text-gray-200">2. Envie sua foto</h2>
-                        <p className="text-gray-400">Tema: <span className="font-semibold text-green-400">{selectedTheme}</span></p>
+                <div className="flex flex-col items-center w-full space-y-8 animate-fade-in">
+                    <div className="text-center">
+                        <h2 className="text-2xl font-bold text-gray-200">1. Tema: <span className="text-green-400">{selectedTheme}</span></h2>
                         <button 
-                            onClick={() => setSelectedTheme(null)} 
+                            onClick={() => { setSelectedTheme(null); setSelectedAspectRatio('16:9'); }} 
                             className="mt-1 text-sm text-blue-400 hover:text-blue-300 underline focus:outline-none focus:ring-2 focus:ring-blue-400 rounded"
                         >
                             Trocar tema
                         </button>
                     </div>
-                    <div className="w-full max-w-lg">
+                    
+                    <div className="w-full max-w-lg text-center">
+                        <h2 className="text-2xl font-bold text-gray-200 mb-4">2. Escolha a proporção</h2>
+                        <AspectRatioSelector selectedAspectRatio={selectedAspectRatio} onSelectAspectRatio={setSelectedAspectRatio} />
+                    </div>
+
+                    <div className="w-full max-w-lg text-center">
+                        <h2 className="text-2xl font-bold text-gray-200 mb-4">3. Envie sua foto</h2>
                         <UploadStep onUpload={handleUpload} setError={setError} />
                     </div>
                 </div>
@@ -141,6 +175,10 @@ const App: React.FC = () => {
               onRestart={handleRestart}
               onCropConfirm={handleCropConfirm}
               theme={selectedTheme}
+              onGenerateVideoPrompt={handleGenerateVideoPrompt}
+              videoPrompt={videoPrompt}
+              isVideoPromptLoading={isVideoPromptLoading}
+              videoPromptError={videoPromptError}
             />
           );
         }

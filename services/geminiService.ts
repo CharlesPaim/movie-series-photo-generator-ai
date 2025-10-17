@@ -1,10 +1,10 @@
-
 import { GoogleGenAI, Modality } from "@google/genai";
 
 export const generateMovieThemedPhoto = async (
   base64ImageData: string,
   mimeType: string,
   theme: string,
+  aspectRatio: string,
 ): Promise<string> => {
   const API_KEY = process.env.API_KEY;
 
@@ -15,7 +15,7 @@ export const generateMovieThemedPhoto = async (
   const ai = new GoogleGenAI({ apiKey: API_KEY });
 
   try {
-    const prompt = `Transforme a(s) pessoa(s) na foto para que se pareçam com personagem(ns) do filme ou série "${theme}". A imagem deve ser estilizada como um **PÔSTER DE FILME FOTORREALISTA** ou uma **CENA CINEMATOGRÁFICA**. Inclua figurinos, penteados, plano de fundo, adereços e iluminação que correspondam **EXATAMENTE** à estética e à paleta de cores do filme "${theme}".
+    const prompt = `Transforme a(s) pessoa(s) na foto para que se pareçam com personagem(ns) do filme ou série "${theme}". A imagem deve ser estilizada como um **PÔSTER DE FILME FOTORREALISTA** ou uma **CENA CINEMATOGRÁFICA**. A imagem final DEVE ter uma proporção de **${aspectRatio}**. Inclua figurinos, penteados, plano de fundo, adereços e iluminação que correspondam **EXATAMENTE** à estética e à paleta de cores do filme "${theme}".
 
 **Melhoria de Qualidade:** A imagem deve ser renderizada em **fotografia de cinema, 8K, hiper-detalhada, com iluminação dramática e volumétrica**, capturada com uma **lente prime de 85mm com profundidade de campo rasa (bokeh)**.
 
@@ -41,7 +41,7 @@ Retorne **apenas** a imagem final.`;
         ],
       },
       config: {
-        responseModalities: [Modality.IMAGE, Modality.TEXT],
+        responseModalities: [Modality.IMAGE],
       },
     });
 
@@ -83,5 +83,60 @@ Retorne **apenas** a imagem final.`;
         throw new Error(`Falha ao gerar imagem: ${error.message}`);
     }
     throw new Error("Falha ao gerar imagem. Verifique o console para mais detalhes.");
+  }
+};
+
+export const generateVideoPrompt = async (
+  base64ImageData: string,
+  mimeType: string,
+  theme: string,
+): Promise<string> => {
+  const API_KEY = process.env.API_KEY;
+
+  if (!API_KEY) {
+    throw new Error("A chave de API do Gemini não foi encontrada.");
+  }
+
+  const ai = new GoogleGenAI({ apiKey: API_KEY });
+
+  try {
+    const prompt = `Você é um diretor de criação de um estúdio de cinema. Com base na imagem fornecida, que é uma cena com o tema "${theme}", gere um prompt hiperdetalhado para um modelo de IA de texto para vídeo como o Google Veo. O prompt deve descrever um clipe cinematográfico curto, de 5 segundos, que dê vida a esta imagem estática.
+
+Instruções:
+- Descreva a cena, os movimentos sutis e as expressões do personagem.
+- Detalhe a iluminação dinâmica e a atmosfera.
+- Especifique o movimento da câmera (ex: zoom lento, panorâmica suave para a esquerda, travelling).
+- O tom deve corresponder perfeitamente ao filme/série "${theme}".
+- A saída deve ser um único parágrafo de texto, pronto para ser copiado. Não inclua títulos ou formatação extra.`;
+
+    const response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: {
+        parts: [
+          {
+            inlineData: {
+              data: base64ImageData,
+              mimeType: mimeType,
+            },
+          },
+          {
+            text: prompt,
+          },
+        ],
+      },
+    });
+
+    if (response.promptFeedback?.blockReason) {
+      throw new Error(`A solicitação foi bloqueada por motivos de segurança: ${response.promptFeedback.blockReason}`);
+    }
+    
+    return response.text;
+
+  } catch (error) {
+    console.error("Error calling Gemini API for video prompt:", error);
+    if (error instanceof Error) {
+        throw new Error(`Falha ao gerar roteiro para vídeo: ${error.message}`);
+    }
+    throw new Error("Falha ao gerar roteiro para vídeo. Verifique o console para mais detalhes.");
   }
 };

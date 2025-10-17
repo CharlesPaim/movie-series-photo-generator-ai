@@ -1,6 +1,5 @@
-
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { DownloadIcon, CropIcon, RestartIcon, CheckIcon, CancelIcon, EyeIcon, EyeOffIcon, ShareIcon } from './icons';
+import { DownloadIcon, CropIcon, RestartIcon, CheckIcon, CancelIcon, EyeIcon, EyeOffIcon, ShareIcon, FilmIcon, CopyIcon } from './icons';
 
 interface ResultStepProps {
   originalImage: string;
@@ -8,6 +7,10 @@ interface ResultStepProps {
   onRestart: () => void;
   onCropConfirm: (newImageSrc: string) => void;
   theme: string;
+  onGenerateVideoPrompt: () => void;
+  videoPrompt: string | null;
+  isVideoPromptLoading: boolean;
+  videoPromptError: string | null;
 }
 
 interface Crop {
@@ -56,7 +59,17 @@ const getCroppedImg = (image: HTMLImageElement, crop: Crop): string => {
 };
 
 
-export const ResultStep: React.FC<ResultStepProps> = ({ originalImage, generatedImage, onRestart, onCropConfirm, theme }) => {
+export const ResultStep: React.FC<ResultStepProps> = ({ 
+    originalImage, 
+    generatedImage, 
+    onRestart, 
+    onCropConfirm, 
+    theme,
+    onGenerateVideoPrompt,
+    videoPrompt,
+    isVideoPromptLoading,
+    videoPromptError
+}) => {
     const [showOriginal, setShowOriginal] = useState(false);
     const [isCropping, setIsCropping] = useState(false);
     const [crop, setCrop] = useState<Crop>({ x: 0, y: 0, width: 100, height: 100 });
@@ -65,6 +78,7 @@ export const ResultStep: React.FC<ResultStepProps> = ({ originalImage, generated
     const [startPos, setStartPos] = useState({ x: 0, y: 0 });
     const [startCrop, setStartCrop] = useState<Crop | null>(null);
     const [isShareSupported, setIsShareSupported] = useState(false);
+    const [copyButtonText, setCopyButtonText] = useState('Copiar Roteiro');
     
     const imgRef = useRef<HTMLImageElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -243,6 +257,14 @@ export const ResultStep: React.FC<ResultStepProps> = ({ originalImage, generated
         setIsCropping(false);
     };
 
+    const handleCopyPrompt = () => {
+        if (!videoPrompt) return;
+        navigator.clipboard.writeText(videoPrompt).then(() => {
+            setCopyButtonText('Copiado!');
+            setTimeout(() => setCopyButtonText('Copiar Roteiro'), 2000);
+        });
+    };
+
     const imageSrc = showOriginal ? originalImage : generatedImage;
 
     return (
@@ -309,6 +331,19 @@ export const ResultStep: React.FC<ResultStepProps> = ({ originalImage, generated
                             <CropIcon className="w-5 h-5" />
                             <span>Cortar</span>
                         </ActionButton>
+                        
+                        <ActionButton
+                            onClick={onGenerateVideoPrompt}
+                            className="bg-teal-600 hover:bg-teal-500 text-white focus:ring-teal-500"
+                            disabled={isVideoPromptLoading}
+                        >
+                            {isVideoPromptLoading ? (
+                                <div className="w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                            ) : (
+                                <FilmIcon className="w-5 h-5" />
+                            )}
+                            <span>{isVideoPromptLoading ? 'Gerando...' : 'Gerar Roteiro'}</span>
+                        </ActionButton>
 
                         <ActionButton onClick={() => setShowOriginal(!showOriginal)} className="bg-gray-600 hover:bg-gray-500 text-white focus:ring-gray-500">
                             {showOriginal ? <EyeOffIcon className="w-5 h-5" /> : <EyeIcon className="w-5 h-5" />}
@@ -322,6 +357,26 @@ export const ResultStep: React.FC<ResultStepProps> = ({ originalImage, generated
                     </>
                 )}
             </div>
+
+            {videoPromptError && (
+                <div className="w-full max-w-xl p-4 mt-4 text-center bg-red-900/50 border border-red-700 rounded-lg animate-fade-in">
+                    <p className="font-semibold text-red-300">Erro ao gerar roteiro:</p>
+                    <p className="text-sm text-red-400">{videoPromptError}</p>
+                </div>
+            )}
+            {videoPrompt && !videoPromptError && (
+                <div className="w-full max-w-xl p-4 mt-4 space-y-3 bg-gray-800 border border-gray-700 rounded-lg animate-fade-in">
+                    <h3 className="text-lg font-semibold text-gray-200">Roteiro para Vídeo (Prompt)</h3>
+                    <p className="text-sm text-gray-300 whitespace-pre-wrap font-mono bg-gray-900 p-3 rounded-md leading-relaxed">{videoPrompt}</p>
+                    <ActionButton
+                        onClick={handleCopyPrompt}
+                        className="w-full bg-blue-600 hover:bg-blue-500 text-white focus:ring-blue-500"
+                    >
+                        <CopyIcon className="w-4 h-4" />
+                        <span>{copyButtonText}</span>
+                    </ActionButton>
+                </div>
+            )}
         </div>
     );
 };
