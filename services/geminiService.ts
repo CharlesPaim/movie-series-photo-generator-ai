@@ -105,12 +105,12 @@ export const generateVideoPrompt = async (
   const ai = new GoogleGenAI({ apiKey: API_KEY });
 
   try {
-    const prompt = `Você é um diretor de criação de um estúdio de cinema. Com base na imagem fornecida, que é uma cena com o tema "${theme}", gere um prompt **HIPER-DETALHADO** para um modelo de IA de texto para vídeo, como o Google Veo. O prompt deve descrever uma **micro-cena cinematográfica em movimento** que dê vida a esta imagem estática.
+    const prompt = `Você é um diretor de criação de um estúdio de cinema. Com base na imagem fornecida, que é uma cena com o tema "${theme}", gere um prompt **HIPER-DETALHADO** para um modelo de IA de texto para vídeo, como o Google Veo. O prompt deve descrever uma **micro-cena cinematográfica em movimento** que dê vida a esta imagem estática, inspirada em uma **CENA ICÔNICA** do universo "${theme}".
 
 Instruções:
-- **Ação Sutil:** Descreva uma ação ou movimento sutil do personagem (ex: piscar de olhos, mudança de expressão lenta, movimento de um objeto de cena) que transforme a pose estática em um clipe.
+- **Ação Sutil e Temática:** Descreva uma ação ou movimento sutil do personagem ou de um objeto de cena que seja **diretamente relevante** para "${theme}". **EVITE** focar apenas em respiração ou piscar de olhos. (Ex: Um sabre de luz ativa, um dinossauro se move ao fundo, uma carta mágica levita, a areia do deserto se move).
+- **Câmera Variada:** Especifique um movimento de câmera suave e deliberado que **NÃO SEJA SOMENTE um zoom ou dolly-in frontal**. Varie a técnica (ex: pan-up dramático, travel/tracking shot lateral, dutch angle lento, ou tilt-down revelador).
 - **Estilo Visual:** O clipe deve ter **Cor Cinematográfica (Cinematic Color Grading)**, **Iluminação Dramática e Volumétrica**, correspondendo exatamente à estética de "${theme}".
-- **Câmera:** Especifique um movimento de câmera suave e deliberado (ex: dolly in lento, travelling lateral, ou zoom suave).
 - **Som/Atmosfera:** Mencione um efeito sonoro ou trilha sonora de fundo que reforce o tom da cena (ex: "Trilha sonora épica crescendo", "Vento uivante").
 - **Formato:** A saída deve ser um único parágrafo de texto, pronto para ser copiado. Não inclua títulos, numeração ou formatação extra.`;
 
